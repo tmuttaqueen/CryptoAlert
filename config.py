@@ -1,5 +1,5 @@
 
-CRYPTO_LIST = [ 'Bitcoin', 'Ethereum', 'Cardano', 'Enjin Coin', 'Ripple', 'Polygon', 'Solana' ]
+CRYPTO_LIST = [ 'Bitcoin', 'Ethereum', 'Cardano', 'Enjin Coin', 'Ripple', 'Polygon', 'Solana', 'Decentraland' ]
 
 COIN_NAME = {
     'Bitcoin': 'BTC',
@@ -8,7 +8,8 @@ COIN_NAME = {
     'Enjin Coin': 'ENJ', 
     'Ripple': 'XRP',
     'Polygon': 'MATIC',
-    'Solana': 'SOL'
+    'Solana': 'SOL',
+    'Decentraland': 'MANA',
 }
 
 COIN_LINK = {
@@ -18,8 +19,11 @@ COIN_LINK = {
     'Enjin Coin': 'https://coinmarketcap.com/currencies/enjin-coin/', 
     'Ripple': 'https://coinmarketcap.com/currencies/xrp/',
     'Polygon': 'https://coinmarketcap.com/currencies/polygon/',
-    'Solana': 'https://coinmarketcap.com/currencies/solana/'
+    'Solana': 'https://coinmarketcap.com/currencies/solana/',
+    'Decentraland': 'https://coinmarketcap.com/currencies/decentraland/'
 }
+
+NICEHASH_FEE = 0.005
 
 for crypto in CRYPTO_LIST:
     assert COIN_NAME.get(crypto) is not None, f'No coin name for crypto {crypto}'
