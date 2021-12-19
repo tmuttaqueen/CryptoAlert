@@ -22,8 +22,9 @@ def get_info( crypto, link, conversions ):
     try:
         page = requests.get(link)
     except Exception as e:
-        print(crypto, e)
+        print(f"Error gettig {crypto} Lik:", e)
         return None, None
+    
     if page.status_code != 200:
         print(f"Couldn't parse {link}")
         return None, None 
@@ -34,17 +35,17 @@ def get_info( crypto, link, conversions ):
     try:
         price = normalize_price( summary_container.select('.priceTitle .priceValue span')[0].get_text() )
     except Exception as e:
-        print(e)
+        print("Price couldn't be parsed in downloaded page:", e)
         price = None 
     
     try:
         target_key = (COIN_NAME[crypto] + COIN_NAME['Bitcoin']).upper()
         to_bitcoin = 1
         if crypto != 'Bitcoin':
-            to_bitcoin = conversions.get(target_key)
+            to_bitcoin = conversions[target_key]
         bitcoin_to_crypto = (1.0/to_bitcoin)*(1-NICEHASH_FEE)
     except Exception as e:
-        print(crypto, e)
+        print(f"{crypto} conversion not found in NiceHash: {e}")
         bitcoin_to_crypto = None
     return price, bitcoin_to_crypto
 
@@ -57,25 +58,31 @@ def print_table():
         table.add_column("Info", ["$Price", "From BTC (NiceHash)"])
         try:
             conversions_response = requests.get("https://api2.nicehash.com/exchange/api/v2/info/prices")
-            conversions = None 
-            if conversions_response.status_code == 200:
-                conversions = json.loads(conversions_response.text)
         except Exception as e:
-            print(e)
+            print("Error getting NiceHash Server Response: ", e)
             continue
+
+        conversions = {} 
+        if conversions_response.status_code == 200:
+            conversions = json.loads(conversions_response.text)
 
         for crypto in CRYPTO_LIST:
             price, from_bitcoin = get_info( crypto, COIN_LINK[crypto], conversions )
-            price_pretty = "-1"
+            
+            price_pretty = ""
             if price is not None:
                 prices[crypto] = price
                 price_pretty = f"{price:.2f}"
-            from_bitcoin_pretty = "-1"
+            else:
+                price = -1
+
+            from_bitcoin_pretty = ""
             if from_bitcoin is not None:
-                from_bitcoin_pretty = f"{from_bitcoin:.2f}"
+                from_bitcoin_pretty = f"{from_bitcoin:.2f}*"
             else:
                 from_bitcoin = (prices['Bitcoin'] / price)*(1-NICEHASH_FEE)
                 from_bitcoin_pretty = f"{from_bitcoin:.2f}"
+            
             table.add_column(f"{crypto}", [price_pretty, from_bitcoin_pretty])
             table.align[crypto] = "r"
         
