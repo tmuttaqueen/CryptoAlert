@@ -6,6 +6,8 @@ from prettytable import PrettyTable
 from threading import Timer
 import json 
 import time
+from datetime import datetime
+
 
 def normalize_price(price: str):
     price = price[1:].replace(',', '')
@@ -61,7 +63,7 @@ def print_table():
         except Exception as e:
             print(e)
             continue
-        
+
         for crypto in CRYPTO_LIST:
             price, from_bitcoin = get_info( crypto, COIN_LINK[crypto], conversions )
             price_pretty = "-1"
@@ -76,8 +78,12 @@ def print_table():
                 from_bitcoin_pretty = f"{from_bitcoin:.2f}"
             table.add_column(f"{crypto}", [price_pretty, from_bitcoin_pretty])
             table.align[crypto] = "r"
+        
+        now = datetime.now()
+        current_time = now.strftime("%d %b, %Y: %I:%M:%S %p")
+        print("Current Time =", current_time)
         print(table)
-        time.sleep(10)
+        time.sleep(30)
 
 
 if __name__ == '__main__':
